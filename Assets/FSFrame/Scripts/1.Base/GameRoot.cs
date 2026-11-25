@@ -7,7 +7,7 @@ public class GameRoot : SingletonMono<GameRoot>
     protected override void Awake()
     {
         // 多场景测试方便，但是需要做这个检测防止重复
-        if (Instance == null)
+        if (Instance != null)
         {
             Destroy(gameObject);
             return;
