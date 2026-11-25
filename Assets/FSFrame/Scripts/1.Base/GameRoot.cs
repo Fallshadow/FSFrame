@@ -2,8 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameRoot : MonoBehaviour
+public class GameRoot : SingletonMono<GameRoot>
 {
+    public string Name = "Name";
+    
     // Start is called before the first frame update
     void Start()
     {

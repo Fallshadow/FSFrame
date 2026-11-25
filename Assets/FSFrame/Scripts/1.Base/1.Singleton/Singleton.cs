@@ -5,7 +5,7 @@ using UnityEngine;
 /// <summary>
 /// 单例模式的基类
 /// </summary>
-public class Singleton<T> where T : new()
+public class Singleton<T> where T : Singleton<T>, new()
 {
     private static T _instance;
 
