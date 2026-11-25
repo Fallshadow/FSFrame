@@ -6,30 +6,42 @@ public class PoolManager : ManagerBase<PoolManager>
 {
     [SerializeField]
     private GameObject rootObj;
-    private Dictionary<string, GameObjectPoolData> poolDic = new Dictionary<string, GameObjectPoolData>();
+    private readonly Dictionary<string, GameObjectPoolData> gameObjPoolDic = new Dictionary<string, GameObjectPoolData>();
+    private readonly Dictionary<string, ObjectPoolData> objPoolDic = new Dictionary<string, ObjectPoolData>();
+    
     public override void Init()
     {
         base.Init();
         Debug.Log("Pool Manager Init.");
     }
 
+    #region GameObjectPool
+
+    public T GetGameObject<T>(GameObject prefab, Transform parent = null) where T : UnityEngine.Object
+    {
+        GameObject gameObj = GetGameObject(prefab, parent);
+        if (gameObj != null)
+        {
+            return gameObj.GetComponent<T>();
+        }
+        return null;
+    }
+    
     /// <summary>
     /// 外部从对象池获取游戏物体
     /// </summary>
-    /// <param name="prefab"></param>
-    /// <returns></returns>
-    public GameObject GetGameObject(GameObject prefab)
+    public GameObject GetGameObject(GameObject prefab, Transform parent = null)
     {
         string prefabName = prefab.name;
-        GameObject obj = null;
-        if (IsPoolHaveObj(prefabName))
+        GameObject gameObj = null;
+        if (IsPoolHaveGameObject(prefabName))
         {
-            obj = poolDic[prefabName].GetObj();
+            gameObj = gameObjPoolDic[prefabName].GetObj(parent);
         }
         else
         {
-            obj = GameObject.Instantiate(prefab);
-            obj.name = prefabName;
+            gameObj = GameObject.Instantiate(prefab);
+            gameObj.name = prefabName;
         }
         return null;
     }
@@ -37,26 +49,79 @@ public class PoolManager : ManagerBase<PoolManager>
     /// <summary>
     /// 游戏物体回收进对象池
     /// </summary>
-    /// <param name="obj"></param>
-    public void PushGameObject(GameObject obj)
+    public void PushGameObject(GameObject gameObj)
     {
-        string objName = obj.name;
-        if (!poolDic.TryGetValue(objName, out GameObjectPoolData poolData))
+        string gameObjName = gameObj.name;
+        if (!gameObjPoolDic.TryGetValue(gameObjName, out GameObjectPoolData poolData))
         {
-            poolData = new GameObjectPoolData(rootObj, obj);
-            poolDic.Add(objName, poolData);
+            poolData = new GameObjectPoolData(rootObj, gameObj);
+            gameObjPoolDic.Add(gameObjName, poolData);
+        }
+        poolData.PushObj(gameObj);
+    }
+
+    public bool IsPoolHaveGameObject(GameObject prefab)
+    {
+        string prefabName = prefab.name;
+        return IsPoolHaveGameObject(prefabName);
+    }
+    
+    public bool IsPoolHaveGameObject(string prefabName)
+    {
+        return gameObjPoolDic.ContainsKey(prefabName) && gameObjPoolDic[prefabName].PoolQueue.Count > 0;
+    }
+
+    #endregion
+
+    #region ObjectPool
+    
+    public T GetObject<T>() where T : class, new()
+    {
+        T obj;
+        foreach (var item in objPoolDic.Values)
+        {
+            Debug.Log("获取-队列数量" + item.PoolQueue.Count);
+        }
+        
+        if (IsPoolHaveObject<T>(out string objName))
+        {
+            objName = typeof(T).FullName;
+            obj = (T)objPoolDic[objName].GetObj();
+            return obj;
+        }
+        else
+        {
+            return new T();
+        }
+    }
+    
+    public void PushObject(object obj)
+    {
+        foreach (var item in objPoolDic.Values)
+        {
+            Debug.Log("放进-队列数量" + item.PoolQueue.Count);
+        }
+        string objName = obj.GetType().FullName;
+        if (!objPoolDic.TryGetValue(objName, out ObjectPoolData poolData))
+        {
+            poolData = new ObjectPoolData();
+            objPoolDic.Add(objName, poolData);
         }
         poolData.PushObj(obj);
     }
 
-    public bool IsPoolHaveObj(GameObject prefab)
+    public bool IsPoolHaveObject<T>(out string objName)
     {
-        string prefabName = prefab.name;
-        return IsPoolHaveObj(prefabName);
+        // 考虑到命名空间
+        objName = typeof(T).FullName;
+        return objPoolDic.ContainsKey(objName) && objPoolDic[objName].PoolQueue.Count > 0;
     }
     
-    public bool IsPoolHaveObj(string prefabName)
+    #endregion
+
+    public void Clear(bool isClearGameObjPool = true, bool isClearObjPool = true)
     {
-        return poolDic.ContainsKey(prefabName) && poolDic[prefabName].poolQueue.Count > 0;
+        if(isClearGameObjPool) gameObjPoolDic.Clear();
+        if(isClearObjPool) objPoolDic.Clear();
     }
 }

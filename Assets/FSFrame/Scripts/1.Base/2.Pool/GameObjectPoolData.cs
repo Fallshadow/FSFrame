@@ -6,30 +6,34 @@ using UnityEngine.SceneManagement;
 public class GameObjectPoolData
 {
     // 这个池子的父节点
-    public GameObject fatherObj;
+    private readonly GameObject fatherObj;
     // 池子队列
-    public Queue<GameObject> poolQueue;
+    public readonly Queue<GameObject> PoolQueue;
 
     public GameObjectPoolData(GameObject rootObj, GameObject obj)
     {
         fatherObj = new GameObject(obj.name);
         fatherObj.transform.SetParent(rootObj.transform);
-        poolQueue = new Queue<GameObject>();
+        PoolQueue = new Queue<GameObject>();
     }
 
     public void PushObj(GameObject obj)
     {
-        poolQueue.Enqueue(obj);
+        PoolQueue.Enqueue(obj);
         obj.transform.SetParent(fatherObj.transform);
         obj.SetActive(false);
     }
 
-    public GameObject GetObj()
+    public GameObject GetObj(Transform parent)
     {
-        GameObject obj = poolQueue.Dequeue();
+        GameObject obj = PoolQueue.Dequeue();
         obj.SetActive(true);
-        obj.transform.SetParent(null);
-        SceneManager.MoveGameObjectToScene(obj, SceneManager.GetActiveScene());
+        obj.transform.SetParent(parent);
+        // 只有没有指定父物体才需要放到原始场景
+        if (parent == null)
+        {
+            SceneManager.MoveGameObjectToScene(obj, SceneManager.GetActiveScene());
+        }
         return obj;
     }
 }

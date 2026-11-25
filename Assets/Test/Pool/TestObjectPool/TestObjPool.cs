@@ -2,21 +2,28 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TestPool : MonoBehaviour
+public class TestObjPool : MonoBehaviour
 {
-    public GameObject prefab;
+
     // Start is called before the first frame update
     void Start()
     {
         
     }
 
+    // 只能一个一个来
+    TestObjPoolPrefab testPrefab;
     // Update is called once per frame
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            PoolManager.Instance.GetGameObject(prefab);
+            testPrefab = PoolManager.Instance.GetObject<TestObjPoolPrefab>();
+        }
+        
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            testPrefab.Dead();
         }
     }
 }
