@@ -5,7 +5,7 @@ using UnityEngine;
 public class ObjectPoolData
 {
     public readonly Queue<object> PoolQueue = new Queue<object>();
-
+    
     public void PushObj(object obj)
     {
         PoolQueue.Enqueue(obj);
