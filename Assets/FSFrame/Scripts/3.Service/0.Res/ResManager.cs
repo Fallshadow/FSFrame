@@ -11,8 +11,7 @@ public partial class ResManager : ManagerBase<ResManager>
     public override void Init()
     {
         base.Init();
-        // TODO: 替换成真正的配置
-        wantCacheDic = new Dictionary<Type, bool>();
+        wantCacheDic = GameRoot.Instance.GameSetting.CacheDic;
     }
 
     // 检查一个类型是否需要缓存

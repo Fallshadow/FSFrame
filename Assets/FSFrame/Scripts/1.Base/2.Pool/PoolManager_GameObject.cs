@@ -5,9 +5,7 @@ public partial class PoolManager
 {
     [SerializeField] private GameObject rootObj;
 
-    private readonly Dictionary<string, GameObjectPoolData> gameObjPoolDic =
-        new Dictionary<string, GameObjectPoolData>();
-
+    private readonly Dictionary<string, GameObjectPoolData> gameObjPoolDic = new Dictionary<string, GameObjectPoolData>();
 
     public T GetGameObject<T>(GameObject prefab, Transform parent = null) where T : UnityEngine.Object
     {
