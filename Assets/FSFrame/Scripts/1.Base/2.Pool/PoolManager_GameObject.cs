@@ -60,6 +60,24 @@ public partial class PoolManager
         return gameObjPoolDic.ContainsKey(prefabName) && gameObjPoolDic[prefabName].PoolQueue.Count > 0;
     }
     
+    // 检查游戏物体缓存，如果成功，就直接加载物体，否则，不实例化直接返回 NULL（所以是以返回信息为主）
+    public bool IsPoolHaveGameObjectThenOutGameObject(string path, out GameObject gameObj, Transform parent = null)
+    {
+        // 通过路径获取最终预制体名称 "UI/LoginWindow"
+        string[] pathSplit = path.Split('/');
+        string prefabName = pathSplit[pathSplit.Length - 1];
+        gameObj = null;
+        if (gameObjPoolDic.ContainsKey(prefabName) && gameObjPoolDic[prefabName].PoolQueue.Count > 0)
+        {
+            gameObj =  gameObjPoolDic[prefabName].GetObj(parent);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    
     #region 删除
 
     public void ClearGameObject(string prefabName)
