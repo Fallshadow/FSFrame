@@ -42,8 +42,6 @@ public class FSEventListener : MonoBehaviour, IMouseEvent
     #region 内部类、接口等
 
     // 一次事件的数据包装类
-    // 用对象池循环利用
-    [Pool]
     private class FSEventListenerEventInfo<T>
     {
         // T：事件本身的参数 （PointerEventData、Collision）
@@ -61,6 +59,14 @@ public class FSEventListener : MonoBehaviour, IMouseEvent
         {
             action?.Invoke(eventData, args);
         }
+
+        // 需要解除引用
+        public void Destory()
+        {
+            action = null;
+            args = null;
+            this.FSObjectPushPool();
+        }
     }
 
     interface IFSEventListenerEventInfos
@@ -69,7 +75,6 @@ public class FSEventListener : MonoBehaviour, IMouseEvent
     }
 
     // 一类事件的数据包装类，包含多个 FSEventListenerEventInfo
-    [Pool]
     private class FSEventListenerEventInfos<T> : IFSEventListenerEventInfos
     {
         // 这个类型的所有事件
@@ -78,7 +83,7 @@ public class FSEventListener : MonoBehaviour, IMouseEvent
         // 添加事件
         public void AddListener(Action<T, object[]> action, params object[] args)
         {
-            FSEventListenerEventInfo<T> info = ResManager.Instance.Load<FSEventListenerEventInfo<T>>();
+            FSEventListenerEventInfo<T> info = PoolManager.Instance.GetObject<FSEventListenerEventInfo<T>>();
             info.Init(action, args);
             eventList.Add(info);
         }
@@ -99,7 +104,7 @@ public class FSEventListener : MonoBehaviour, IMouseEvent
                         if (!args.ArrayEquals(eventList[i].args)) continue;
                     }
                     // 参数相同，或者不检查参数，都走移除
-                    eventList[i].FSObjectPushPool();
+                    eventList[i].Destory();
                     eventList.RemoveAt(i);
                     return;
                 }
@@ -110,9 +115,10 @@ public class FSEventListener : MonoBehaviour, IMouseEvent
         {
             for (int i = 0; i < eventList.Count; i++)
             {
-                eventList[i].FSObjectPushPool();
+                eventList[i].Destory();
             }
             eventList.Clear();
+            this.FSObjectPushPool();
         }
 
         public void TriggerEvent(T eventData)
@@ -130,17 +136,16 @@ public class FSEventListener : MonoBehaviour, IMouseEvent
     
     #region 外部的访问
 
-    public void AddListener<T>(FSEventType eventType, Action<T, object[]> action, 
-        bool checkArgs = false, params object[] args)
+    public void AddListener<T>(FSEventType eventType, Action<T, object[]> action, params object[] args)
     {
         if (eventInfoDic.TryGetValue(eventType, out var value))
         {
-            (value as FSEventListenerEventInfos<T>)?.AddListener(action, checkArgs, args);
+            (value as FSEventListenerEventInfos<T>)?.AddListener(action, args);
         }
         else
         {
-            FSEventListenerEventInfos<T> infos = ResManager.Instance.Load<FSEventListenerEventInfos<T>>();
-            infos.AddListener(action, checkArgs, args);
+            FSEventListenerEventInfos<T> infos = PoolManager.Instance.GetObject<FSEventListenerEventInfos<T>>();
+            infos.AddListener(action, args);
             eventInfoDic.Add(eventType,  infos);
         }
     }
@@ -153,11 +158,12 @@ public class FSEventListener : MonoBehaviour, IMouseEvent
         }
     }
 
-    public void RemoveAllListener<T>(FSEventType eventType)
+    public void RemoveAllListener(FSEventType eventType)
     {
         if (eventInfoDic.TryGetValue(eventType, out var value))
         {
-            (value as FSEventListenerEventInfos<T>)?.RemoveAllListener();
+            value.RemoveAllListener();
+            eventInfoDic.Remove(eventType);
         }
     }
     
