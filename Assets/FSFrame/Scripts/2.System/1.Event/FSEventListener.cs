@@ -90,6 +90,7 @@ public class FSEventListener : MonoBehaviour, IMouseEvent
 
         // 传统事件，比如 button 的 onclick 注册 N 次，只要有移除，就全部移除了，如果是没有参数，似乎也是合理的
         // 但是，如果是需要有参数，N 次的参数不同，只希望移除特定参数，是没办法的，所以我们自己这里这样写移除，且一次添加对应一次移除
+        // 而 EventManager 不一样，它那边一般不会有移除 ID 事件还要保留的某些的需求
         public void RemoveListener(Action<T, object[]> action, bool checkArgs = false, params object[] args)
         {
             for (int i = 0; i < eventList.Count; i++)
