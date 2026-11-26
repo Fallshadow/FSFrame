@@ -434,45 +434,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 514510637213229904, guid: ccdeab35c1215624783c5ef6f52e0ef7,
-        type: 3}
-      propertyPath: Loop
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 514510637213229904, guid: ccdeab35c1215624783c5ef6f52e0ef7,
-        type: 3}
-      propertyPath: Mute
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 514510637213229904, guid: ccdeab35c1215624783c5ef6f52e0ef7,
-        type: 3}
-      propertyPath: m_Volume
-      value: 0.25
-      objectReference: {fileID: 0}
     - target: {fileID: 633945072766611452, guid: ccdeab35c1215624783c5ef6f52e0ef7,
         type: 3}
       propertyPath: m_Name
       value: GameRoot
-      objectReference: {fileID: 0}
-    - target: {fileID: 3204809163041701153, guid: ccdeab35c1215624783c5ef6f52e0ef7,
-        type: 3}
-      propertyPath: isLoop
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3204809163041701153, guid: ccdeab35c1215624783c5ef6f52e0ef7,
-        type: 3}
-      propertyPath: isMute
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3204809163041701153, guid: ccdeab35c1215624783c5ef6f52e0ef7,
-        type: 3}
-      propertyPath: bgVolume
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 3204809163041701153, guid: ccdeab35c1215624783c5ef6f52e0ef7,
-        type: 3}
-      propertyPath: globalVolume
-      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 8027842213504297857, guid: ccdeab35c1215624783c5ef6f52e0ef7,
         type: 3}

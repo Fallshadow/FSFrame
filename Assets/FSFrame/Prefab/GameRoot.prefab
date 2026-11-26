@@ -75,9 +75,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bgAudioSource: {fileID: 514510637213229904}
+  prefab_AudioPlay: {fileID: 3389525094007582581, guid: 1a78e1c5d5167204ba3415f6c2eba15f,
+    type: 3}
   globalVolume: 0
   bgVolume: 0
   effectVolume: 0
+  isMute: 0
+  isLoop: 0
 --- !u!1 &1438670247705090684
 GameObject:
   m_ObjectHideFlags: 0
