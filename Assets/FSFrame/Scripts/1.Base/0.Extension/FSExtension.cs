@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 /// <summary>
 /// 扩展方法
@@ -12,27 +11,34 @@ public static class FSExtension
 {
     #region 通用
 
-    /// <summary>
-    /// 获取自身的某个特性
-    /// </summary>
-    /// <param name="obj"></param>
-    /// <typeparam name="T">指定特性</typeparam>
-    /// <returns></returns>
+    // 获取自身的某个特性
     public static T GetAttribute<T>(this object obj) where T : Attribute
     {
         return obj.GetType().GetCustomAttribute<T>();
     }
     
-    /// <summary>
-    /// 获取某个类型的特性
-    /// </summary>
-    /// <param name="obj"></param>
-    /// <param name="type">特性所在的类型</param>
-    /// <typeparam name="T">指定特性</typeparam>
-    /// <returns></returns>
+    // 获取某个类型的特性
     public static T GetAttribute<T>(this object obj, Type type) where T : Attribute
     {
         return type.GetCustomAttribute<T>();
+    }
+
+    public static bool ArrayEquals(this object[] objs, object[] other)
+    {
+        if (other == null || objs.Length != other.Length || objs.GetType() != other.GetType())
+        {
+            return false;
+        }
+
+        for (int i = 0; i < objs.Length; i++)
+        {
+            if (!objs[i].Equals(other[i]))
+            {
+                return false;
+            }
+        }
+        
+        return true;
     }
     
     #endregion
@@ -49,7 +55,7 @@ public static class FSExtension
         FSGameObjectPushPool(com.gameObject);   
     }
     
-    public static void FSObjectPushPool(this Object obj)
+    public static void FSObjectPushPool(this object obj)
     {
         PoolManager.Instance.PushObject(obj);   
     }
