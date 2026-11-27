@@ -133,7 +133,21 @@ public class FSEventListener : MonoBehaviour, IMouseEvent
 
     #endregion
 
-    private Dictionary<FSEventType, IFSEventListenerEventInfos> eventInfoDic = new Dictionary<FSEventType, IFSEventListenerEventInfos>();
+    // 如果不这么做 会对每一个枚举进行装箱比较 费性能
+    private class FSEventTypeEnumComparer : Singleton<FSEventTypeEnumComparer>,IEqualityComparer<FSEventType>
+    {
+        public bool Equals(FSEventType x, FSEventType y)
+        {
+            return x == y;
+        }
+
+        public int GetHashCode(FSEventType obj)
+        {
+            return (int)obj;
+        }
+    }
+    
+    private Dictionary<FSEventType, IFSEventListenerEventInfos> eventInfoDic = new Dictionary<FSEventType, IFSEventListenerEventInfos>(FSEventTypeEnumComparer.Instance);
     
     #region 外部的访问
 

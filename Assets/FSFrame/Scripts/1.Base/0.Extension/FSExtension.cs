@@ -90,19 +90,34 @@ public static class FSExtension
     
     #region Mono
 
-    /// <summary>
-    /// 添加Update监听
-    /// </summary>
-    public static void AddUpdateListener(this object obj, Action action)
+    public static void OnUpdate(this object obj, Action action)
     {
         MonoManager.Instance.AddUpdateListener(action);
     }
-    /// <summary>
-    /// 移除Update监听
-    /// </summary>
-    public static void RemoverUpdateListener(this object obj, Action action)
+
+    public static void RemoveUpdate(this object obj, Action action)
     {
-        MonoManager.Instance.RemoverUpdateListener(action);
+        MonoManager.Instance.RemoveUpdateListener(action);
+    }
+
+    public static void OnLateUpdate(this object obj, Action action)
+    {
+        MonoManager.Instance.AddLateUpdateListener(action);
+    }
+
+    public static void RemoveLateUpdate(this object obj, Action action)
+    {
+        MonoManager.Instance.RemoveLateUpdateListener(action);
+    }
+
+    public static void OnFixedUpdate(this object obj, Action action)
+    {
+        MonoManager.Instance.AddFixedUpdateListener(action);
+    }
+
+    public static void RemoveFixedUpdate(this object obj, Action action)
+    {
+        MonoManager.Instance.RemoveFixedUpdateListener(action);
     }
 
     public static Coroutine StartCoroutine(this object obj, IEnumerator routine)
