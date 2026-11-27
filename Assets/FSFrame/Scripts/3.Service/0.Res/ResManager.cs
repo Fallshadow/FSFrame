@@ -3,25 +3,24 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public partial class ResManager : ManagerBase<ResManager>
+public static partial class ResManager
 {
     // 需要缓存的类型（和对象池配合）
-    private Dictionary<Type, bool> wantCacheDic;
+    private static Dictionary<Type, bool> wantCacheDic;
 
-    public override void Init()
+    static ResManager()
     {
-        base.Init();
         wantCacheDic = GameRoot.Instance.Setting.CacheDic;
     }
 
     // 检查一个类型是否需要缓存
-    private bool CheckCacheDic(Type type)
+    private static bool CheckCacheDic(Type type)
     {
         return wantCacheDic.ContainsKey(type);
     }
 
     // 加载资源 比如 AudioClip 
-    public T LoadAsset<T>(string path) where T : UnityEngine.Object
+    public static T LoadAsset<T>(string path) where T : UnityEngine.Object
     {
         return Resources.Load<T>(path);
     }
@@ -29,12 +28,12 @@ public partial class ResManager : ManagerBase<ResManager>
 
     // 一定是有回调使用的，不然帮你加载干嘛嘞
     // 异步加载资源 比如 AudioClip (也可以是预制体，但是这种方式不配套实例化)
-    public void LoadAssetAsync<T>(string path, Action<T> callback) where T : UnityEngine.Object
+    public static void LoadAssetAsync<T>(string path, Action<T> callback) where T : UnityEngine.Object
     {
-        StartCoroutine(DoLoadAssetAsync<T>(path, callback));
+        MonoManager.Instance.StartCoroutine(DoLoadAssetAsync<T>(path, callback));
     }
 
-    IEnumerator DoLoadAssetAsync<T>(string path, Action<T> callback) where T : UnityEngine.Object
+    static IEnumerator DoLoadAssetAsync<T>(string path, Action<T> callback) where T : UnityEngine.Object
     {
         ResourceRequest request = Resources.LoadAsync<T>(path);
         yield return request;
@@ -44,7 +43,7 @@ public partial class ResManager : ManagerBase<ResManager>
 
     
     // 获取实例 Object，如果需要缓存，会从对象池中获取
-    public T Load<T>() where T : class, new()
+    public static T Load<T>() where T : class, new()
     {
         if (CheckCacheDic(typeof(T)))
         {

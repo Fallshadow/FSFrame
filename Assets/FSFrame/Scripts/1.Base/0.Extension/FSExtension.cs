@@ -87,4 +87,37 @@ public static class FSExtension
     }
 
     #endregion
+    
+    #region Mono
+
+    /// <summary>
+    /// 添加Update监听
+    /// </summary>
+    public static void AddUpdateListener(this object obj, Action action)
+    {
+        MonoManager.Instance.AddUpdateListener(action);
+    }
+    /// <summary>
+    /// 移除Update监听
+    /// </summary>
+    public static void RemoverUpdateListener(this object obj, Action action)
+    {
+        MonoManager.Instance.RemoverUpdateListener(action);
+    }
+
+    public static Coroutine StartCoroutine(this object obj, IEnumerator routine)
+    {
+        return MonoManager.Instance.StartCoroutine(routine);
+    }
+
+    public static void StopCoroutine(this object obj, Coroutine routine)
+    {
+        MonoManager.Instance.StopCoroutine(routine);
+    }
+    public static void StopAllCoroutines(this object obj)
+    {
+        MonoManager.Instance.StopAllCoroutines();
+    }
+
+    #endregion
 }

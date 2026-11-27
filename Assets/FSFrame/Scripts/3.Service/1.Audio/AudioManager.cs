@@ -168,7 +168,7 @@ public class AudioManager : ManagerBase<AudioManager>
 
     public void PlayBGAudio(string clipPath, bool loop = true, float volume = -1)
     {
-        AudioClip clip = ResManager.Instance.LoadAsset<AudioClip>(clipPath);
+        AudioClip clip = ResManager.LoadAsset<AudioClip>(clipPath);
         PlayBGAudio(clipPath, loop, volume);
     }
 
@@ -238,7 +238,7 @@ public class AudioManager : ManagerBase<AudioManager>
     /// <param name="delay">回调要在结束播放后延迟多久执行</param>
     public void PlayOneShot(string audioClipPath,Component component, float volumeScale = 1, bool is3D = true, UnityAction callback = null, float delay = 0)
     {
-        AudioClip audioClip = ResManager.Instance.LoadAsset<AudioClip>(audioClipPath);
+        AudioClip audioClip = ResManager.LoadAsset<AudioClip>(audioClipPath);
         if (audioClip != null) PlayOneShot(audioClip, component, volumeScale, is3D, callback, delay);
     }
 
@@ -271,7 +271,7 @@ public class AudioManager : ManagerBase<AudioManager>
     /// <param name="delay">回调要在结束播放后延迟多久执行</param>
     public void PlayOneShot(string audioClipPath,Vector3 position, float volumeScale = 1, bool is3D = true, UnityAction callback = null, float delay = 0)
     {
-        AudioClip audioClip = ResManager.Instance.LoadAsset<AudioClip>(audioClipPath);
+        AudioClip audioClip = ResManager.LoadAsset<AudioClip>(audioClipPath);
         if (audioClip != null) PlayOneShot(audioClip, position, volumeScale, is3D, callback, delay);
     }
 
