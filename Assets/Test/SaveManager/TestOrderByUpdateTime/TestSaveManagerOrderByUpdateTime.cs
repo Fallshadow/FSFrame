@@ -17,9 +17,9 @@ public class TestSaveManagerOrderByUpdateTime : MonoBehaviour
                 // }
                 for (int i = 0; i < 10; i++)
                 {
-                        SaveManager.SaveObject(new TestSaveData() {StrName = "张三"}, i);
+                        SaveManager.SaveObjectToSaveItem(new TestSaveData() {StrName = "张三"}, i);
                 }
-                SaveManager.SaveObject(new TestSaveData() {StrName = "张三"}, 5);
+                SaveManager.SaveObjectToSaveItem(new TestSaveData() {StrName = "张三"}, 5);
                 List<SaveItem> saveItems = SaveManager.GetSaveItemListByUpdateTime();
                 foreach (SaveItem saveItem in saveItems)
                 {
@@ -31,7 +31,7 @@ public class TestSaveManagerOrderByUpdateTime : MonoBehaviour
         {
                 List<SaveItem> SaveItems = SaveManager.GetAllSaveItemList(saveItem =>
                 {
-                        TestSaveData saveData = SaveManager.LoadObject<TestSaveData>(saveItem);
+                        TestSaveData saveData = SaveManager.LoadObjectBySaveItem<TestSaveData>(saveItem);
                         if (saveData == null) return "";
                         return saveData.StrName;
                 });

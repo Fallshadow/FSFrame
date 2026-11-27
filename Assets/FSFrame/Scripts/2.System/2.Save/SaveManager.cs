@@ -51,17 +51,30 @@ public static partial class SaveManager
         InitSaveManagerData();
     }
 
-    #region 存档设置
+    #region 全局设置
 
+    public static void SaveGlobalSetting(object saveObject, string fileName)
+    {
+        SaveObjectToFile(saveObject, settingDirPath + "/" + fileName);
+    }
+    
+    public static void SaveGlobalSetting(object saveObject)
+    {
+        SaveGlobalSetting(saveObject, saveObject.GetType().Name);
+    }
 
+    public static T LoadGlobalSetting<T>(string fileName) where T : class
+    {
+        return LoadObjectByFile<T>(settingDirPath + "/" + fileName);
+    }
+    
+    public static T LoadGlobalSetting<T>() where T : class
+    {
+        return LoadGlobalSetting<T>(typeof(T).Name);
+    }
 
     #endregion
 
-    // 最新在最后
-
-    // 最新在最前面
-
-    // 最新更新的在最前面
 
     #region 关于缓存
     
@@ -117,33 +130,33 @@ public static partial class SaveManager
     #region 关于对象
     
     // 使用对象名称直接保存到指定 ID 存档
-    public static void SaveObject(object saveObject, int saveID = 0)
+    public static void SaveObjectToSaveItem(object saveObject, int saveID = 0)
     {
-        SaveObject(saveObject, saveObject.GetType().Name, saveID);
+        SaveObjectToSaveItem(saveObject, saveObject.GetType().Name, saveID);
     }
     
-    public static void SaveObject(object saveObject, SaveItem saveItem)
+    public static void SaveObjectToSaveItem(object saveObject, SaveItem saveItem)
     {
-        SaveObject(saveObject, saveObject.GetType().Name, saveItem);
+        SaveObjectToSaveItem(saveObject, saveObject.GetType().Name, saveItem);
     }
 
     // 保存对象到 ID 存档并起名
-    public static void SaveObject(object saveObject, string saveFileName, int saveID = 0)
+    public static void SaveObjectToSaveItem(object saveObject, string saveFileName, int saveID = 0)
     {
-        string dirPath = GetSavePath(saveID, true);
+        string dirPath = GetSaveItemSavePath(saveID, true);
         string savePath = dirPath + "/" + saveFileName;
-        SaveFile(saveObject, savePath);
+        SaveObjectToFile(saveObject, savePath);
         
         GetSaveItem(saveID).UpdateTime(DateTime.Now);                                                   
         SetCache(saveID, saveFileName, saveObject);
         SaveSaveMangerData();
     }
     
-    public static void SaveObject(object saveObject, string saveFileName, SaveItem saveItem)
+    public static void SaveObjectToSaveItem(object saveObject, string saveFileName, SaveItem saveItem)
     {
-        string dirPath = GetSavePath(saveItem.SaveID, true);
+        string dirPath = GetSaveItemSavePath(saveItem.SaveID, true);
         string savePath = dirPath + "/" + saveFileName;
-        SaveFile(saveObject, savePath);
+        SaveObjectToFile(saveObject, savePath);
         
         saveItem.UpdateTime(DateTime.Now);                                                   
         SetCache(saveItem.SaveID, saveFileName, saveObject);
@@ -151,34 +164,34 @@ public static partial class SaveManager
     }
 
     // 根据 ID 和 对象名 加载对象
-    public static T LoadObject<T>(int saveID = 0) where T : class
+    public static T LoadObjectBySaveItem<T>(int saveID = 0) where T : class
     {
-        return LoadObject<T>(typeof(T).Name, saveID);
+        return LoadObjectBySaveItem<T>(typeof(T).Name, saveID);
     }
     
-    public static T LoadObject<T>(SaveItem saveItem) where T : class
+    public static T LoadObjectBySaveItem<T>(SaveItem saveItem) where T : class
     {
-        return LoadObject<T>(typeof(T).Name, saveItem);
+        return LoadObjectBySaveItem<T>(typeof(T).Name, saveItem);
     }
     
     // 根据 ID 和 名称 加载对象
-    public static T LoadObject<T>(string saveFileName, int saveID = 0) where T : class
+    public static T LoadObjectBySaveItem<T>(string saveFileName, int saveID = 0) where T : class
     {
         T obj = GetCache<T>(saveID, saveFileName);
         if (obj != null) return obj;
         
-        string dirPath = GetSavePath(saveID);
+        string dirPath = GetSaveItemSavePath(saveID);
         if(dirPath == null) return null;
         string savePath = dirPath + "/" + saveFileName;
-        obj = LoadFile<T>(savePath);
+        obj = LoadObjectByFile<T>(savePath);
         // 如果本地有存档，然后一开始游戏就加载，这个时候拿出来也要缓存下
         SetCache(saveID, saveFileName, obj);
         return obj;
     }
     
-    public static T LoadObject<T>(string saveFileName, SaveItem saveItem) where T : class
+    public static T LoadObjectBySaveItem<T>(string saveFileName, SaveItem saveItem) where T : class
     {
-        return LoadObject<T>(saveFileName, saveItem.SaveID);
+        return LoadObjectBySaveItem<T>(saveFileName, saveItem.SaveID);
     }
 
     #endregion
@@ -187,7 +200,7 @@ public static partial class SaveManager
     
     private static BinaryFormatter binaryFormatter = new BinaryFormatter();
 
-    private static string GetSavePath(int saveID, bool createDir = true)
+    private static string GetSaveItemSavePath(int saveID, bool createDir = true)
     {
         if (GetSaveItem(saveID) == null) throw new Exception("JK:saveID 存档不存在");
         
@@ -208,13 +221,13 @@ public static partial class SaveManager
         return saveDir;
     }
 
-    private static void SaveFile(object saveObject, string filePath)
+    private static void SaveObjectToFile(object saveObject, string filePath)
     {
         using FileStream f = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None);
         binaryFormatter.Serialize(f, saveObject);
     }
 
-    private static T LoadFile<T>(string filePath) where T : class
+    private static T LoadObjectByFile<T>(string filePath) where T : class
     {
         if (!File.Exists(filePath)) return null;
         FileStream f = new FileStream(filePath, FileMode.Open);
@@ -227,6 +240,7 @@ public static partial class SaveManager
         }
         catch (Exception e)
         {
+            Debug.LogException(e);
             return null;
         }
     }

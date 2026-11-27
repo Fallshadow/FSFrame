@@ -19,7 +19,7 @@ public static partial class SaveManager
 
     private static void InitSaveManagerData()
     {
-        saveManagerData = LoadFile<SaveManagerData>(saveDirpath + "/SaveManagerData");
+        saveManagerData = LoadObjectByFile<SaveManagerData>(saveDirpath + "/SaveManagerData");
         if (saveManagerData == null)
         {
             saveManagerData = new SaveManagerData();
@@ -29,7 +29,7 @@ public static partial class SaveManager
 
     public static void SaveSaveMangerData()
     {
-        SaveFile(saveManagerData, saveDirpath + "/SaveManagerData");
+        SaveObjectToFile(saveManagerData, saveDirpath + "/SaveManagerData");
     }
 
     public static SaveItem GetSaveItem(int saveID)
@@ -56,7 +56,7 @@ public static partial class SaveManager
 
     public static void DeleteSaveItem(int saveID)
     {
-        string saveDir = GetSavePath(saveID);
+        string saveDir = GetSaveItemSavePath(saveID);
         // 如果路径存在 递归删除文件
         if (saveDir != null) Directory.Delete(saveDir, true);
         saveManagerData.saveItemList.Remove(GetSaveItem(saveID));
@@ -66,19 +66,21 @@ public static partial class SaveManager
 
     public static void DeleteSaveItem(SaveItem saveItem)
     {
-        string saveDir = GetSavePath(saveItem.SaveID);
+        string saveDir = GetSaveItemSavePath(saveItem.SaveID);
         // 如果路径存在 递归删除文件
         if (saveDir != null) Directory.Delete(saveDir, true);
         saveManagerData.saveItemList.Remove(saveItem);
         RemoveCache(saveItem.SaveID);
         SaveSaveMangerData();
     }
-
+    
+    // 最新在最后
     public static List<SaveItem> GetSaveItemList()
     {
         return saveManagerData.saveItemList;
     }
 
+    // 最新在最前面
     public static List<SaveItem> GetSaveItemListByCreateTime()
     {
         int count = saveManagerData.saveItemList.Count;
@@ -91,6 +93,7 @@ public static partial class SaveManager
         return saveItems;
     }
 
+    // 最新更新的在最前面
     public static List<SaveItem> GetSaveItemListByUpdateTime()
     {
         int count = saveManagerData.saveItemList.Count;
