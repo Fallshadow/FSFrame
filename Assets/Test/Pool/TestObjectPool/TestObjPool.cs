@@ -2,6 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[Pool]
+public class TestObjPoolAttr
+{
+    
+}
+
 public class TestObjPool : MonoBehaviour
 {
 

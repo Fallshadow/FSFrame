@@ -11,7 +11,7 @@ public partial class ResManager : ManagerBase<ResManager>
     public override void Init()
     {
         base.Init();
-        wantCacheDic = GameRoot.Instance.GameSetting.CacheDic;
+        wantCacheDic = GameRoot.Instance.Setting.CacheDic;
     }
 
     // 检查一个类型是否需要缓存

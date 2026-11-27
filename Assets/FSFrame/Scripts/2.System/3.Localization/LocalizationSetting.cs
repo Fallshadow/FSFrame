@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.Video;
 
 public enum LanguageType
@@ -22,7 +21,7 @@ public class L_Text : ILocalizationResource
 [Serializable]
 public class L_Image  : ILocalizationResource
 {
-    public Image content;
+    public Sprite content;
 }
 
 [Serializable]

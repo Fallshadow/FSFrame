@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class GameRoot : SingletonMono<GameRoot>
 {
@@ -8,8 +10,8 @@ public class GameRoot : SingletonMono<GameRoot>
     /// 框架设置
     /// </summary>
     [SerializeField]
-    private GameSetting gameSetting;
-    public GameSetting GameSetting { get { return gameSetting; } }
+    private GameSetting setting;
+    public GameSetting Setting { get { return setting; } }
     protected override void Awake()
     {
         // 多场景测试方便，但是需要做这个检测防止重复
@@ -32,4 +34,21 @@ public class GameRoot : SingletonMono<GameRoot>
             managers[i].Init();
         }
     }
+    
+    #if UNITY_EDITOR
+
+    [InitializeOnLoadMethod]
+    public static void InitForEditor()
+    {
+        var gameRootGo = GameObject.Find("GameRoot");
+        if (Instance == null &&  gameRootGo != null)
+        {
+            EventManager.Clear();
+            Instance = gameRootGo.GetComponent<GameRoot>();
+            Instance.InitManager();
+            Instance.Setting.InitForEditor();
+        }
+    }
+    
+    #endif
 }

@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.Video;
 
 /// <summary>
 /// 扩展方法
@@ -60,5 +62,29 @@ public static class FSExtension
         PoolManager.Instance.PushObject(obj);   
     }
     
+    #endregion
+
+    #region 本地化
+
+    public static void Localization(this Text com, string workSpace, string key)
+    {
+        com.text = LocalizationManager.Instance.GetLocalizationData<L_Text>(workSpace, key).content;
+    }
+    
+    public static void Localization(this Image com, string workSpace, string key)
+    {
+        com.sprite = LocalizationManager.Instance.GetLocalizationData<L_Image>(workSpace, key).content;
+    }
+    
+    public static void Localization(this AudioSource com, string workSpace, string key)
+    {
+        com.clip = LocalizationManager.Instance.GetLocalizationData<L_Audio>(workSpace, key).content;
+    }
+    
+    public static void Localization(this VideoPlayer com, string workSpace, string key)
+    {
+        com.clip = LocalizationManager.Instance.GetLocalizationData<L_Video>(workSpace, key).content;
+    }
+
     #endregion
 }

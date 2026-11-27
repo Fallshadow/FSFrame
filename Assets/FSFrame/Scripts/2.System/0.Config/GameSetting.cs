@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Reflection;
 using Sirenix.OdinInspector;
-using UnityEditor;
 using UnityEngine;
 
 /// <summary>
@@ -17,26 +16,17 @@ public class GameSetting : ConfigBase
         public Dictionary<Type, bool> CacheDic = new Dictionary<Type, bool>();
         
 #if UNITY_EDITOR
+        
         [Button(Name = "初始化游戏配置", ButtonHeight = 50)]
         [GUIColor(0,1,0)]
-        private void Init()
-        {
+        public void InitForEditor()
+        { 
                 PoolAttributeOnEditor();
-        }
-
-        // 编译前执行函数
-        [InitializeOnLoadMethod]
-        private static void LoadForEditor()
-        {
-                if (GameObject.Find("GameRoot") != null)
-                {
-                        GameObject.Find("GameRoot").GetComponent<GameRoot>().GameSetting.Init();
-                }
         }
 
         // 将所有程序集下有 pool 特性的类型加入到 CacheDic 中
         private void PoolAttributeOnEditor()
-        {
+        { 
                 CacheDic.Clear();
                 // 获取所有程序集
                 Assembly[] asms = AppDomain.CurrentDomain.GetAssemblies();
